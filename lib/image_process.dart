@@ -11,6 +11,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:image/image.dart' as img;
 import 'dart:ui' as ui;
 
+import 'package:upadated_scanner/straighten_Image.dart';
+
 class ImageProcessScreen extends StatefulWidget {
   final XFile imageFile;
   // final List<Recognition>? results;
@@ -56,11 +58,7 @@ class _ImageProcessScreenState extends State<ImageProcessScreen> {
             final Uint8List imageBytes = await widget.imageFile.readAsBytes();
 
             // ignore: use_build_context_synchronously
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DrawPage(imageBytes: imageBytes),
-                ));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => StraightenImage(imageBytes: imageBytes)));
           },
           child: const Icon(Icons.crop),
         ),

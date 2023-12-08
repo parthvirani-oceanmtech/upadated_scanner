@@ -22,30 +22,6 @@ class _DrawPageState extends State<DrawPage> {
   Widget build(BuildContext context) {
     final rawImage = img.decodeImage(widget.imageBytes);
 
-    final Offset topLeft = finalCordinate[0];
-    final Offset topRight = finalCordinate[1];
-    final Offset bottomLeft = finalCordinate[2];
-    final Offset bottomRight = finalCordinate[3];
-
-    double left = topLeft.dx;
-    double top = topLeft.dy;
-    double right = topRight.dx;
-    double bottom = bottomLeft.dy;
-
-    // Calculate width and height of the cropped region
-    double width = right - left;
-    double height = bottom - top;
-
-    final croppedImage = img.copyCrop(
-      rawImage!,
-      x: left.toInt(),
-      y: top.toInt(),
-      width: width.toInt(),
-      height: height.toInt(),
-    );
-
-    final croppedBytes = img.encodePng(croppedImage);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Crop Image'),
@@ -101,35 +77,74 @@ class _DrawPageState extends State<DrawPage> {
 //   }
 // }
 
-// Matrix4 _calculateTransformMatrix(BuildContext context) {
-//   final Size imageSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
-//   final Size screenSize = MediaQuery.of(context).size;
+Matrix4 _calculateTransformMatrix(
+    {required double screenWidth,
+    required double screenHeight,
+    required BuildContext context,
+    required double cropWidth,
+    required double cropHeight}) {
+  // final Size imageSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+  // final Size screenSize = MediaQuery.of(context).size;
 
-//   final List<Offset> coordinates = finalCordinate;
+  final List<Offset> originalCorners = [
+    const Offset(0, 0), // Top-left corner of the original image
+    Offset(screenWidth, 0), // Top-right corner
+    Offset(0, screenHeight), // Bottom-left corner
+    Offset(screenWidth, screenHeight), // Bottom-right corner
+  ];
 
-//   final double x1 = coordinates[0].dx;
-//   final double y1 = coordinates[0].dy;
-//   final double x2 = coordinates[1].dx;
-//   final double y2 = coordinates[1].dy;
-//   final double x3 = coordinates[2].dx;
-//   final double y3 = coordinates[2].dy;
-//   final double x4 = coordinates[3].dx;
-//   final double y4 = coordinates[3].dy;
+  // Define the desired transformed corners based on the user-selected corners
+  final List<Offset> targetCorners = finalCordinate; // Assuming the user provides the corners
 
-//   final double minX = [x1, x2, x3, x4].reduce((value, element) => value > element ? element : value);
-//   final double maxX = [x1, x2, x3, x4].reduce((value, element) => value < element ? element : value);
-//   final double minY = [y1, y2, y3, y4].reduce((value, element) => value > element ? element : value);
-//   final double maxY = [y1, y2, y3, y4].reduce((value, element) => value < element ? element : value);
+  final List<Offset> src = [
+    originalCorners[0],
+    originalCorners[1],
+    originalCorners[2],
+    originalCorners[3],
+  ];
 
-//   final Matrix4 matrix = Matrix4.identity();
+  // Target corners: desired positions after transformation
+  final List<Offset> dst = [
+    targetCorners[0],
+    targetCorners[1],
+    targetCorners[2],
+    targetCorners[3],
+  ];
 
-//   matrix.setEntry(0, 0, (maxX - minX) / imageSize.width);
-//   matrix.setEntry(1, 1, (maxY - minY) / imageSize.height);
-//   matrix.setEntry(3, 0, minX);
-//   matrix.setEntry(3, 1, minY);
+  // Construct transformation matrix
+  final srcMatrix = _constructMatrix(src);
+  final dstMatrix = _constructMatrix(dst);
 
-//   return matrix;
-// }
+  final transformationMatrix = srcMatrix * dstMatrix.invert();
+
+  // Create a transformation matrix using Matrix4.identity() as the starting point
+
+  return transformationMatrix;
+}
+
+Matrix4 _constructMatrix(List<Offset> corners) {
+  final Matrix4 matrix = Matrix4.identity();
+
+  // Assuming that the corners are mapped to a normalized square (0-1 in both dimensions)
+  // Mapping the corners to a unit square simplifies the transformation calculation
+  matrix.setEntry(0, 0, corners[0].dx);
+  matrix.setEntry(0, 1, corners[0].dy);
+  matrix.setEntry(0, 3, 1);
+
+  matrix.setEntry(1, 0, corners[1].dx);
+  matrix.setEntry(1, 1, corners[1].dy);
+  matrix.setEntry(1, 3, 1);
+
+  matrix.setEntry(2, 0, corners[2].dx);
+  matrix.setEntry(2, 1, corners[2].dy);
+  matrix.setEntry(2, 3, 1);
+
+  matrix.setEntry(3, 0, corners[3].dx);
+  matrix.setEntry(3, 1, corners[3].dy);
+  matrix.setEntry(3, 3, 1);
+
+  return matrix;
+}
 
 class CustomShapeClipper extends CustomClipper<Path> {
   final List<Offset> offsets;
