@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, unused_import, unused_local_variable, unnecessary_null_comparison, prefer_const_constructors, unnecessary_brace_in_string_interps, avoid_print
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -12,6 +14,7 @@ import 'package:image/image.dart' as img;
 import 'dart:ui' as ui;
 
 import 'package:upadated_scanner/straighten_Image.dart';
+import 'package:upadated_scanner/straighten_image_new.dart';
 
 class ImageProcessScreen extends StatefulWidget {
   final XFile imageFile;
@@ -58,7 +61,12 @@ class _ImageProcessScreenState extends State<ImageProcessScreen> {
             final Uint8List imageBytes = await widget.imageFile.readAsBytes();
 
             // ignore: use_build_context_synchronously
-            Navigator.push(context, MaterialPageRoute(builder: (context) => StraightenImage(imageBytes: imageBytes)));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StraightenImage(imageBytes: imageBytes),
+              ),
+            );
           },
           child: const Icon(Icons.crop),
         ),

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, prefer_const_constructors
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -23,8 +25,16 @@ class _StraightenImageState extends State<StraightenImage> {
   ];
 
   final Size screenSize = Size(ScreenUtil().screenWidth, ScreenUtil().screenHeight);
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(cropCoordinates);
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Cropped Image Display'),
@@ -37,7 +47,12 @@ class _StraightenImageState extends State<StraightenImage> {
           child: Align(
             alignment: Alignment.topLeft,
             child: Transform(
-              transform: calculateTransformMatrix(),
+              transform: Matrix4.identity()
+                ..setEntry(0, 0, 1.0) // Scale factor
+                ..setEntry(0, 1, 0.0) // Shear factor
+                ..setEntry(1, 0, 0.0) // Shear factor
+                ..setEntry(1, 1, 1.0) // Scale factor
+                ..setEntry(3, 2, 0.001), // Perspective coefficient calculateTransformMatrix(),
               child: Image.memory(
                 widget.imageBytes,
                 fit: BoxFit.fill,

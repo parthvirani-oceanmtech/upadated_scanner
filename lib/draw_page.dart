@@ -1,14 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unused_local_variable, unused_element
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upadated_scanner/box_widget.dart';
 import 'package:image/image.dart' as img;
 
 class DrawPage extends StatefulWidget {
   final Uint8List imageBytes;
-  DrawPage({required this.imageBytes});
+  const DrawPage({super.key, required this.imageBytes});
 
   // Uint8List cropImages;
   // DrawPage({Key? key, required this.cropImages});
@@ -24,7 +23,7 @@ class _DrawPageState extends State<DrawPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crop Image'),
+        title: const Text('Crop Image'),
       ),
       body: ClipPath(
         clipper: CustomShapeClipper(finalCordinate),

@@ -1,18 +1,14 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unused_import, library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image/image.dart' as img;
 
-
 List<Offset> finalCordinate = [];
 
 class BoxWidget extends StatefulWidget {
-  Rect result;
+  final Rect result;
 
-  BoxWidget({
-    Key? key,
-    required this.result,
-  }) : super(key: key);
+  const BoxWidget({Key? key, required this.result}) : super(key: key);
 
   @override
   _BoxWidgetState createState() => _BoxWidgetState();
@@ -32,7 +28,7 @@ class _BoxWidgetState extends State<BoxWidget> {
   void initialiseCordinate() {
     final left = widget.result.left;
     final top = widget.result.top;
-    final right = widget.result.right;  
+    final right = widget.result.right;
     final bottom = widget.result.bottom;
 
     cornerCordinate = [
@@ -57,13 +53,11 @@ class _BoxWidgetState extends State<BoxWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(finalCordinate);
     return Positioned(
       left: 0,
       top: 0,
@@ -150,14 +144,13 @@ class ShapeClipper extends CustomClipper<Path> {
 class DraggablePoint extends StatelessWidget {
   final Function(Offset) onDrag;
 
-  DraggablePoint({required this.onDrag});
+  const DraggablePoint({super.key, required this.onDrag});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanUpdate: (details) {
         onDrag(details.delta);
-        print(onDrag);
       },
       child: Container(
         width: 16,
